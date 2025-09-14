@@ -1,4 +1,3 @@
-# bot/run_render.py
 import os, asyncio, aiohttp, json
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
@@ -8,7 +7,7 @@ import uvicorn
 API_BASE = os.getenv("API_BASE", "")
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 
-# ---------- Telegram bot (aiogram) ----------
+# -------- Telegram bot --------
 dp = Dispatcher()
 
 @dp.message(F.text.startswith("/start"))
@@ -57,16 +56,19 @@ async def run_bot():
     if not BOT_TOKEN:
         print("BOT_TOKEN not set"); return
     bot = Bot(BOT_TOKEN)
+    # مهم: امسح أي Webhook سابق قبل البدء بالـPolling
+    await bot.delete_webhook(drop_pending_updates=True)
+    from aiogram import Dispatcher
     await dp.start_polling(bot)
 
-# ---------- Tiny FastAPI just for Render health ----------
+# -------- Tiny FastAPI for Render health --------
 app = FastAPI()
 
 @app.get("/health")
 def health():
     return {"ok": True}
 
-# ---------- Entry: run FastAPI + bot concurrently ----------
+# -------- Entry: run FastAPI + bot together --------
 async def main():
     asyncio.create_task(run_bot())
     port = int(os.getenv("PORT", "8000"))
