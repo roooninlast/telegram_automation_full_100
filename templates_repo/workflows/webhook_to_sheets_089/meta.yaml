@@ -1,0 +1,36 @@
+id: webhook_to_sheets_089
+name: 'Webhook → Google Sheets #089'
+version: 1
+category: capture
+intents:
+- webhook_to_sheets
+- lead_capture
+- form_post
+tags:
+- webhook
+- sheets
+- append
+- capture
+inputs:
+  required:
+  - key: sheet_id
+    type: string
+    description: Target Google Sheet ID
+  optional:
+  - key: columns
+    type: list[str]
+    description: Columns to map
+outputs:
+  required:
+  - key: sheet_range
+    type: string
+    description: Range like Sheet1!A:Z
+secrets: []
+compat:
+  n8n:
+    min_version: 1.65.0
+    nodes_whitelist:
+    - webhook
+    - googleSheets
+constraints:
+  max_nodes: 6

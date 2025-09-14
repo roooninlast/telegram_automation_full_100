@@ -1,0 +1,108 @@
+{
+  "name": "HTTP Monitor → Telegram #054",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "everyMinute"
+      },
+      "id": "cronh54",
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        180,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.URL}}",
+        "options": {}
+      },
+      "id": "http54",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        420,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json[\"statusCode\"]}}",
+              "operation": "notEqual",
+              "value2": "={{$env.EXPECT_STATUS || 200}}"
+            }
+          ]
+        }
+      },
+      "id": "if54",
+      "name": "IF status != expected",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        650,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.CHAT_ID}}",
+        "text": "=Alert: {{$env.URL}} returned {{$json[\"statusCode\"]}}"
+      },
+      "id": "tgal54",
+      "name": "Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        900,
+        180
+      ],
+      "credentials": {
+        "telegramApi": {
+          "apiToken": "={{$env.TELEGRAM_TOKEN}}"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "IF status != expected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF status != expected": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  }
+}

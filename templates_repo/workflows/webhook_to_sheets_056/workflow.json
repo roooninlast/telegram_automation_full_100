@@ -1,0 +1,47 @@
+{
+  "name": "Webhook → Google Sheets #056",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "capture_56",
+        "responseMode": "onReceived"
+      },
+      "id": "wh56",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "={{$env.SHEET_ID}}",
+        "range": "={{$env.SHEET_RANGE}}"
+      },
+      "id": "gs56",
+      "name": "Append to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        520,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

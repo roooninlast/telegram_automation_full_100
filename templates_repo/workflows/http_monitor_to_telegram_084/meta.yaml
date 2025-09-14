@@ -1,0 +1,41 @@
+id: http_monitor_to_telegram_084
+name: 'HTTP Monitor → Telegram #084'
+version: 1
+category: monitoring
+intents:
+- http_monitor
+- uptime_alert
+- status_check
+tags:
+- http
+- monitor
+- if
+- telegram
+- cron
+inputs:
+  required:
+  - key: url
+    type: url
+    description: Endpoint to check
+  optional:
+  - key: expect_status
+    type: int
+    description: Expected HTTP status code (default 200)
+outputs:
+  required:
+  - key: telegram_chat_id
+    type: string
+    description: Alert chat id
+secrets:
+- TELEGRAM_TOKEN
+- CHAT_ID
+compat:
+  n8n:
+    min_version: 1.65.0
+    nodes_whitelist:
+    - cron
+    - httpRequest
+    - if
+    - telegram
+constraints:
+  max_nodes: 8

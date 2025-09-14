@@ -1,0 +1,40 @@
+id: rss_to_telegram_034
+name: 'RSS → Telegram (hourly) #034'
+version: 1
+category: notifications
+intents:
+- rss_to_telegram
+- content_broadcast
+- news_relay
+tags:
+- rss
+- telegram
+- cron
+- broadcast
+- hourly
+inputs:
+  required:
+  - key: rss_url
+    type: url
+    description: RSS feed URL
+  optional:
+  - key: include_keywords
+    type: list[str]
+    description: Filter by keywords
+outputs:
+  required:
+  - key: telegram_chat_id
+    type: string
+    description: Target chat id
+secrets:
+- TELEGRAM_TOKEN
+- CHAT_ID
+compat:
+  n8n:
+    min_version: 1.65.0
+    nodes_whitelist:
+    - cron
+    - rssFeedRead
+    - telegram
+constraints:
+  max_nodes: 10
