@@ -1,5 +1,5 @@
-\
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import os, json, re, yaml, pathlib
 
@@ -30,8 +30,8 @@ def fuzzy_score(q: str, item) -> int:
         " ".join(item.get("intents", [])),
         " ".join(item.get("tags", [])),
         item.get("name") or ""
-    ].lower()
-    text = " ".join(fields)
+    ]
+    text = " ".join(fields).lower()
     for token in re.findall(r"[a-z0-9_-]+", q):
         if token in text: score += 2
     if "rss" in q and "rss" in text: score += 3
@@ -84,6 +84,19 @@ def validate_workflow(wf: dict, nodes_whitelist: list, max_nodes: int = 15):
     if contains_plain_secret(wf):
         raise AssertionError("plain secrets detected; use env placeholders like ={{$env.SECRET}}")
 
+@app.get("/")
+def root():
+    # بدل 404؛ نوجه مباشرة لواجهة الاختبار
+    return RedirectResponse(url="/docs")
+
+@app.get("/health")
+def health():
+    try:
+        cnt = load_index()["count"]
+    except Exception:
+        cnt = None
+    return {"ok": True, "templates": cnt}
+
 @app.get("/stats")
 def stats():
     idx = load_index()
@@ -131,12 +144,7 @@ def compose(body: ComposeRequest):
     wf = json.loads(open(wf_path, "r", encoding="utf-8").read())
     meta = yaml.safe_load(open(meta_path, "r", encoding="utf-8"))
 
-    # basic heuristics
-    import re
-    url = re.search(r"https?://[^\s]+", body.description)
-    rss_url = url.group(0) if url else "https://example.com/feed.xml"
-    target_chat = "-1001234567890"
-
+    # basic heuristics placeholders (لو حبيت توسّعها لاحقًا)
     required_inputs = [x["key"] for x in meta.get("inputs",{}).get("required",[])]
     required_secrets = meta.get("secrets", [])
 
@@ -154,4 +162,4 @@ def compose(body: ComposeRequest):
         workflow_json=wf,
         required_secrets=required_secrets,
         required_inputs=required_inputs
-    )
+)
