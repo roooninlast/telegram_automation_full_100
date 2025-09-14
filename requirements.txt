@@ -3,4 +3,4 @@ fastapi==0.112.2
 uvicorn==0.30.6
 pydantic==2.9.0
 pyyaml==6.0.2
-aiohttp==3.10.5
+aiohttp>=3.9,<3.11
