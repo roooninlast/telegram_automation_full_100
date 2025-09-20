@@ -1,6 +1,6 @@
-aiogram==3.10.0
+aiogram==3.3
 aiohttp==3.9.5
 fastapi==0.112.2
-uvicorn==0.30.6
+uvicorn[standard]>=0.30
 pydantic>=2.8,<2.10
 pyyaml==6.0.2
