@@ -25,5 +25,15 @@ python bot/bot.py
 - Connect this repo, use the included `render.yaml` as a Blueprint.
 - After the web service is up, set the **API_BASE** env var in the worker to the web URL.
 - Set **BOT_TOKEN** from @BotFather.
+- ## Single Web Service (FastAPI + Telegram Webhook)
 
+This repo runs as **one Render Web Service** (no worker). Telegram updates are delivered via **Webhook**.
+
+### Environment Variables (set in Render)
+- `BOT_TOKEN` (required): Telegram bot token from BotFather.
+- `BASE_URL` (required): Your Render service URL, e.g. `https://<your>.onrender.com` (no trailing slash).
+- `WEBHOOK_SECRET` (required): A strong secret; the webhook path becomes `/tg/<WEBHOOK_SECRET>`.
+
+### Build & Start (Render)
+- Build Command:
 Generated at: 2025-09-14T18:42:46.186088Z
