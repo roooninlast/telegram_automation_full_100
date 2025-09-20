@@ -1,28 +1,18 @@
 services:
   - type: web
-    name: automation-api
+    name: ai-automation
     env: python
     plan: free
     buildCommand: |
       pip install -r requirements.txt
-    startCommand: |
-      python scripts/index_templates.py &&       uvicorn server.main:app --host 0.0.0.0 --port $PORT
+      # (اختياري) لو عندك فهرسة قوالب:
+      if [ -f scripts/index_templates.py ]; then python scripts/index_templates.py; fi
+    startCommand: uvicorn server.app:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    autoDeploy: true
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.8
-
-  - type: worker
-    name: telegram-bot
-    env: python
-    plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-    startCommand: |
-      python scripts/index_templates.py &&       python bot/bot.py
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.8
-      - key: API_BASE
-        value: https://automation-api.onrender.com
       - key: BOT_TOKEN
-        sync: false
+        sync: false              # تحطها بيدك في Render
+      - key: BASE_URL
+        value: https://ai-automation.onrender.com   # بدّلها بالرابط الحقيقي بعد أول نشر
+      - key: WEBHOOK_SECRET
+        value: super_secret_32_chars               # غيّرها لقيمة قوية
